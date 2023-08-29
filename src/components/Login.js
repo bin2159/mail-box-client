@@ -4,6 +4,8 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import { Button, Stack } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { authAction } from "../store/auth";
+import { useDispatch } from "react-redux";
 const emailReducer = (state, action) => {
   if (action.type === "USER_INPUT") {
     return { value: action.val, isValid: action.val.includes("@") };
@@ -35,6 +37,7 @@ const Login = () => {
   const [login, setLogin] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
   const navigate=useNavigate()
+  const dispatch=useDispatch()
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: "",
     isValid: null,
@@ -54,11 +57,13 @@ const Login = () => {
     if (!login) {
       cp = confirmPassword.current.value;
     }
+    console.log(e.target.value,confirmPassword.current.value)
     dispatchPassword({
       type: "USER_INPUT",
       val: e.target.value,
       cpVal: cp,
     });
+    
   };
   const confirmPasswordHandler = (e) => {
     dispatchPassword({ type: "CONFIRM_PASSWORD", val: e.target.value });
@@ -96,9 +101,9 @@ const Login = () => {
       const data = await response.json();
       if (!response.ok) {
         alert(data.error.message);
+        navigate('/')
       }
-      localStorage.setItem("token", data.idToken);
-      localStorage.setItem("email", data.email);
+      dispatch(authAction.login({email:data.email,token:data.idToken}))
       navigate('home')
     } 
     catch (error) {

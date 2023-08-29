@@ -7,7 +7,10 @@ import { Button } from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
 
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { useDispatch } from "react-redux";
+import { emailActions } from "../store/emails";
 const DraftEditor = () => {
+  const dispatch=useDispatch()
   const [data, setData] = useState({ email: "", subject: "" });
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
@@ -19,7 +22,7 @@ const DraftEditor = () => {
     const email = localStorage.getItem("email").replace(/[@.]/g, "");
     const receiverEmail=data.email.replace(/[@.]/g,"")
     const postData = {
-      senderEmail: email,
+      senderEmail: localStorage.getItem('email'),
       receiverEmail:data.email,
       subject: data.subject,
       text: convertToRaw(editorState.getCurrentContent()).blocks[0].text,
@@ -41,12 +44,18 @@ const DraftEditor = () => {
           headers: { "Content-Type": "application/json" },
         }
       )
+      alert('Email send Success')
+      setData({email:'',subject:''})
+      setEditorState('')
+      const data =await response.json()
+      dispatch(emailActions.outboxEmail([[data.name,postData]]))
+      console.log(data)
     } catch (error) {
       console.log(error)
     }
   };
   return (
-    <Card className="w-75 mx-auto mt-5">
+    <Card className="w-75 mb-auto mt-5">
       <Card.Body>
         <Card.Title>
           <InputGroup className="mb-3">
