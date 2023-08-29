@@ -1,8 +1,9 @@
 import React from 'react'
 
+import DraftEditor  from '../components/DraftEditor'
 const HomePage = () => {
   return (
-    <div>HomePage</div>
+    <DraftEditor/>
   )
 }
 
