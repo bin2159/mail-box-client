@@ -3,6 +3,7 @@ import Card from "react-bootstrap/Card";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import { Button, Stack } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 const emailReducer = (state, action) => {
   if (action.type === "USER_INPUT") {
     return { value: action.val, isValid: action.val.includes("@") };
@@ -33,6 +34,7 @@ const passwordReducer = (state, action) => {
 const Login = () => {
   const [login, setLogin] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
+  const navigate=useNavigate()
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: "",
     isValid: null,
@@ -95,9 +97,9 @@ const Login = () => {
       if (!response.ok) {
         alert(data.error.message);
       }
-      console.log(data.idToken,data.email)
       localStorage.setItem("token", data.idToken);
       localStorage.setItem("email", data.email);
+      navigate('home')
     } 
     catch (error) {
       console.log(error);
