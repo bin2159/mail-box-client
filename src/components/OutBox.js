@@ -7,6 +7,7 @@ import { emailActions } from "../store/emails";
 const OutBox = ({setChecked,setEmailData,setInboxRead}) => {
  
   const outbox = useSelector((state) => state.email.outbox);
+  console.log(outbox)
   const dispatch=useDispatch()
   const emailDeleteHandler=async(id)=>{
     const email = localStorage.getItem("email").replace(/[@.]/g, "");

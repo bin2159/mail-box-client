@@ -3,7 +3,7 @@ import { Editor } from "react-draft-wysiwyg";
 import { EditorState, convertToRaw } from "draft-js";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
-import { Button } from "react-bootstrap";
+import { Button, Toast, ToastContainer } from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
 
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { emailActions } from "../store/emails";
 const DraftEditor = () => {
   const dispatch=useDispatch()
+  const [showToast,setToast]=useState(false)
   const [data, setData] = useState({ email: "", subject: "" });
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
@@ -45,18 +46,17 @@ const DraftEditor = () => {
           headers: { "Content-Type": "application/json" },
         }
       )
-      alert('Email send Success')
+      setToast(true)
       setData({email:'',subject:''})
       setEditorState('')
       const data =await response.json()
       dispatch(emailActions.addOutboxEmail([data.name,postData]))
-      
     } catch (error) {
-      console.log(error)
+      alert(error.message)
     }
   };
   return (
-    <Card className="w-75 mb-auto mt-5 mx-5">
+    <> <Card className="w-75 mb-auto mt-5 mx-5">
       <Card.Body>
         <Card.Title>
           <InputGroup className="mb-3">
@@ -92,6 +92,26 @@ const DraftEditor = () => {
         <Button onClick={sendMailHandler}>Send</Button>
       </Card.Body>
     </Card>
+    {showToast&&<ToastContainer
+          className="p-3"
+          position={"bottom-end"}
+          style={{ zIndex: 1 }}
+        >
+          <Toast delay={2000} autohide onClose={()=>setToast(false)}>
+            <Toast.Header closeButton={true} >
+              <img
+                src="holder.js/20x20?text=%20"
+                className="rounded me-2"
+                alt=""
+              />
+              <strong className="me-auto">Mail Box Client</strong>
+              <small>just now</small>
+            </Toast.Header>
+            <Toast.Body>Email Sent Successfully</Toast.Body>
+          </Toast>
+        </ToastContainer>}
+    </>
+   
   );
 };
 

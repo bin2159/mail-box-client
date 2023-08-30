@@ -4,16 +4,17 @@ import HomePage from "./pages/HomePage";
 
 import LoginPage from "./pages/LoginPage";
 import NavBar from "./pages/NavBar"
+import { useSelector } from "react-redux";
 
 function App() {
-   
+   const login=useSelector(state=>state.auth.login)
   return (
 
   <Router>
     <NavBar/>
     <Routes>
       <Route path='/' element={<LoginPage/>}/>
-      <Route path='/home' element={<HomePage/>}/>
+      {login&&<Route path='/home' element={<HomePage/>}/>}
     </Routes>
   </Router>
     

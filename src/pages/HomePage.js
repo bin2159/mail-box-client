@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar";
 import { Stack } from "react-bootstrap";
 import Inbox from "../components/Inbox";
 import OutBox from "../components/OutBox";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { emailActions } from "../store/emails";
 import Email from "../components/Email";
 const HomePage = () => {
@@ -13,7 +13,7 @@ const HomePage = () => {
   const [emailData, setEmailData] = useState();
   const [inboxRead, setInboxRead] = useState(false);
   const dispatch = useDispatch();
-
+  const inbox=useSelector(state=>state.email.inbox)
   useEffect(() => {
     const getReceivedData = async () => {
       const email = localStorage.getItem("email").replace(/[@.]/g, "");
@@ -23,7 +23,7 @@ const HomePage = () => {
         );
         const data = await response.json();
         const list = Object.entries(data);
-        dispatch(emailActions.inboxEmail(list));
+       return list
       } catch (error) {
         console.log(error);
       }
@@ -37,20 +37,24 @@ const HomePage = () => {
         );
         const data = await response.json();
         const list = Object.entries(data);
-        dispatch(emailActions.outboxEmail(list));
+       
       } catch (error) {
         console.log(error);
       }
     };
+      // getSendData();
+      // getReceivedData();
     const id = setInterval(() => {
-      getSendData();
-      getReceivedData();
+      getSendData().then(list=> dispatch(emailActions.inboxEmail(list)))
+      getReceivedData().then(list=> dispatch(emailActions.outboxEmail(list)))
     }, 2000);
     return () => {
       clearInterval(id) 
     };
   }, [dispatch]);
-
+  useEffect(()=>{
+    dispatch(emailActions.unReadInboxEmail())
+  },[dispatch,inbox])
   return (
     <>
       <Stack

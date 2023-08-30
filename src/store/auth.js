@@ -12,9 +12,9 @@ const authSlice=createSlice({
             state.login=true
         },
         logout(state){
+            state.login=false
             localStorage.removeItem('email')
             localStorage.removeItem('token')
-            state.login=false
         }
     }
 })
