@@ -57,7 +57,6 @@ const Login = () => {
     if (!login) {
       cp = confirmPassword.current.value;
     }
-    console.log(e.target.value,confirmPassword.current.value)
     dispatchPassword({
       type: "USER_INPUT",
       val: e.target.value,

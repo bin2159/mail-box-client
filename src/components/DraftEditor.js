@@ -50,7 +50,7 @@ const DraftEditor = () => {
       setEditorState('')
       const data =await response.json()
       dispatch(emailActions.addOutboxEmail([data.name,postData]))
-      console.log(data)
+      
     } catch (error) {
       console.log(error)
     }

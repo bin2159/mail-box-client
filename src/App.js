@@ -4,7 +4,6 @@ import HomePage from "./pages/HomePage";
 
 import LoginPage from "./pages/LoginPage";
 import NavBar from "./pages/NavBar"
-import Logout from "./components/Logout";
 
 function App() {
    
@@ -15,7 +14,6 @@ function App() {
     <Routes>
       <Route path='/' element={<LoginPage/>}/>
       <Route path='/home' element={<HomePage/>}/>
-      <Route path='/logout' element={<Logout/>}/>
     </Routes>
   </Router>
     

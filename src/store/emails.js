@@ -24,10 +24,10 @@ const emailSlice=createSlice({
             state.outbox=state.outbox.filter(email=>email[0]!==action.payload)
         },
         readInboxEmail(state,action){
-            console.log('hai')
             const readData=state.inbox.findIndex(email=>email[0]===action.payload)
             state.inbox[readData][1]={...state.inbox[readData][1],read:true}
             state.unRead=state.inbox.reduce((acc,cur)=>acc+(cur[1].read?0:1),0)
+
         }
     }
 })

@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 
 const Sidebar = ({checked,setChecked}) => {
    const unRead=useSelector(state=>state.email.unRead)
-   console.log(unRead)
   return (
     <Stack  className='mt-5'>
     <ToggleButton
@@ -43,17 +42,6 @@ const Sidebar = ({checked,setChecked}) => {
         onClick={(e) =>  setChecked({outbox:true})}
       >
         Send 
-      </ToggleButton>
-      <ToggleButton
-        className="mb-2"
-        id="toggle-check"
-        type="checkbox"
-        variant="outline-primary"
-        checked={checked.received}
-        value="1"
-        onClick={(e) =>  setChecked({received:true})}
-      >
-        Received
       </ToggleButton>
     </Stack>
    

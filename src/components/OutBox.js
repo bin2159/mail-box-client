@@ -7,7 +7,6 @@ import { emailActions } from "../store/emails";
 const OutBox = ({setChecked,setEmailData,setInboxRead}) => {
  
   const outbox = useSelector((state) => state.email.outbox);
-  console.log(outbox)
   const dispatch=useDispatch()
   const emailDeleteHandler=async(id)=>{
     const email = localStorage.getItem("email").replace(/[@.]/g, "");
@@ -51,7 +50,7 @@ const emailHandler = (data) => {
         {outbox.length > 0 &&
           outbox.map((element, index, data) => {
             return (
-              <ListGroup.Item className="mx-2 my-2">
+              <ListGroup.Item className="mx-2 my-2" key={data[data.length - index - 1][0]}>
                 <ButtonGroup vertical className="w-100">
                   <Button
                     variant="outline-light"
@@ -60,7 +59,7 @@ const emailHandler = (data) => {
                     }}
                   >
                     <Container>
-                      <Row key={data[data.length - index - 1][0]}>
+                      <Row>
                         <Col>
                           <Stack   direction="horizontal" gap={5}>
                             {data[data.length - index - 1][1].receiverEmail}
