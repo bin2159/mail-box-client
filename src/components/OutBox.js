@@ -1,6 +1,6 @@
 import {  useDispatch, useSelector } from "react-redux";
 import Card from "react-bootstrap/Card";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, ButtonGroup, Col, Container, Row, Stack } from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 import { emailActions } from "../store/emails";
 
@@ -24,27 +24,59 @@ const OutBox = () => {
     }
 }
   return (
-    <Card className="w-75 mb-auto mt-5" style={{backgroundColor:'rgb(33,37,41)',color:'white'}}>
+    <Card
+      className="w-75 mb-auto mt-4 mx-5"
+      style={{ backgroundColor: "rgb(33,37,41)", color: "white" }}
+    >
       <Card.Body>
-        <ListGroup variant="dark"  >
-          <ListGroup.Item style={{backgroundColor:'rgb(33,37,41)',color:'white'}}>
-            <Row >
-              <Col>User</Col>
-              <Col className="col-8">Email</Col>
-              <Col>Remove</Col>
-            </Row>
-          </ListGroup.Item>
-        </ListGroup>
+        <ListGroup.Item className="mx-2 my-2">
+          <ButtonGroup vertical className="w-100">
+            <Button variant="outline-light" disabled={true}>
+              <Container>
+                <Row>
+                  <Col>User</Col>
+                  <Col>Subject</Col>
+                  <Col>Remove</Col>
+                </Row>
+              </Container>
+            </Button>
+          </ButtonGroup>
+        </ListGroup.Item>
 
-        {outbox.length>0&&outbox.map((data) => {return (
-          <ListGroup.Item className="m-3">
-            <Row key={data[0]}>
-              <Col>{data[1].receiverEmail}</Col>
-              <Col className="col-8">{data[1].text}</Col>
-              <Col className="me-auto"><Button onClick={()=>emailDeleteHandler(data[0])}>x</Button></Col>
-            </Row>
-          </ListGroup.Item>
-        )})}
+        {outbox.length > 0 &&
+          outbox.map((element, index, data) => {
+            return (
+              <ListGroup.Item className="mx-2 my-2">
+                <ButtonGroup vertical className="w-100">
+                  <Button
+                    variant="outline-light"
+                   
+                  >
+                    <Container>
+                      <Row key={data[data.length - index - 1][0]}>
+                        <Col>
+                          <Stack   direction="horizontal" gap={5}>
+                            {data[data.length - index - 1][1].senderEmail}
+                          </Stack>
+                        </Col>
+                        <Col>{data[data.length - index - 1][1].subject}</Col>
+                        <Col>
+                          <Button
+                            variant="outline-secondary"
+                            className="text-left"
+                            onClick={(e) => { e.stopPropagation()
+                              emailDeleteHandler(data[data.length - index - 1][0])}}
+                          >
+                            x
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Container>
+                  </Button>
+                </ButtonGroup>
+              </ListGroup.Item>
+            );
+          })}
       </Card.Body>
     </Card>
   );

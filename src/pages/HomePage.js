@@ -7,9 +7,11 @@ import Inbox from '../components/Inbox'
 import OutBox from '../components/OutBox'
 import { useDispatch, useSelector } from 'react-redux'
 import { emailActions } from '../store/emails'
+import Email from '../components/Email'
 const HomePage = () => {
   
   const [checked, setChecked] = useState({compose:true});
+  const [emailData,setEmailData]=useState()
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -49,8 +51,9 @@ const HomePage = () => {
     <Stack direction="horizontal" style={{height:'100vh',backgroundColor:'rgb(33,37,41)'}}>
       <Sidebar checked={checked} setChecked={setChecked}/>
    {checked.compose&& <DraftEditor/>}
-   {checked.inbox&&<Inbox/>}
+   {checked.inbox&&<Inbox setChecked={setChecked} setEmailData={setEmailData}/>}
    {checked.outbox&&<OutBox/>}
+   {checked.email&&<Email emailData={emailData}/>}
     </Stack>
      
     </>

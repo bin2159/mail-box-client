@@ -24,6 +24,7 @@ const DraftEditor = () => {
     const postData = {
       senderEmail: localStorage.getItem('email'),
       receiverEmail:data.email,
+      read:false,
       subject: data.subject,
       text: convertToRaw(editorState.getCurrentContent()).blocks[0].text,
     };
@@ -48,14 +49,14 @@ const DraftEditor = () => {
       setData({email:'',subject:''})
       setEditorState('')
       const data =await response.json()
-      dispatch(emailActions.outboxEmail([[data.name,postData]]))
+      dispatch(emailActions.addOutboxEmail([data.name,postData]))
       console.log(data)
     } catch (error) {
       console.log(error)
     }
   };
   return (
-    <Card className="w-75 mb-auto mt-5">
+    <Card className="w-75 mb-auto mt-5 mx-5">
       <Card.Body>
         <Card.Title>
           <InputGroup className="mb-3">
