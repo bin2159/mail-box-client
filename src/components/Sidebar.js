@@ -1,11 +1,13 @@
 import React from 'react'
-import { Stack } from 'react-bootstrap'
+import { Badge, Stack } from 'react-bootstrap'
 import ToggleButton from 'react-bootstrap/ToggleButton';
+import { useSelector } from 'react-redux';
 
 
 
 const Sidebar = ({checked,setChecked}) => {
-   
+   const unRead=useSelector(state=>state.email.unRead)
+   console.log(unRead)
   return (
     <Stack  className='mt-5'>
     <ToggleButton
@@ -28,7 +30,8 @@ const Sidebar = ({checked,setChecked}) => {
         value="1"
         onClick={(e) => setChecked({inbox:true})}
       >
-        Inbox
+        Inbox{' '}  
+        {unRead>0&&<Badge bg="secondary"> {unRead}</Badge>}
       </ToggleButton>
       <ToggleButton
         className="mb-2"

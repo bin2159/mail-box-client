@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
-const initialState={outbox:[],inbox:[]}
+const initialState={outbox:[],inbox:[],unRead:0}
 const emailSlice=createSlice({
     name:'emails',
     initialState,
@@ -14,8 +14,8 @@ const emailSlice=createSlice({
         },
 
         inboxEmail(state,action){
-            //state.inbox=[state.inbox,...action.payload]
-             state.inbox=action.payload
+            state.inbox=action.payload
+            state.unRead=state.inbox.reduce((acc,cur)=>acc+(cur[1].read?0:1),0)
         },
         deleteInboxEmail(state,action){
             state.inbox=state.inbox.filter(email=>email[0]!==action.payload)
@@ -24,8 +24,10 @@ const emailSlice=createSlice({
             state.outbox=state.outbox.filter(email=>email[0]!==action.payload)
         },
         readInboxEmail(state,action){
+            console.log('hai')
             const readData=state.inbox.findIndex(email=>email[0]===action.payload)
             state.inbox[readData][1]={...state.inbox[readData][1],read:true}
+            state.unRead=state.inbox.reduce((acc,cur)=>acc+(cur[1].read?0:1),0)
         }
     }
 })

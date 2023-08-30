@@ -12,6 +12,7 @@ const HomePage = () => {
   
   const [checked, setChecked] = useState({compose:true});
   const [emailData,setEmailData]=useState()
+  const [inboxRead,setInboxRead]=useState(false)
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -23,7 +24,7 @@ const HomePage = () => {
         );
         const data = await response.json();
         const list = Object.entries(data);
-
+        console.log(list)
         dispatch(emailActions.inboxEmail(list));
       } catch (error) {
         console.log(error);
@@ -51,9 +52,9 @@ const HomePage = () => {
     <Stack direction="horizontal" style={{height:'100vh',backgroundColor:'rgb(33,37,41)'}}>
       <Sidebar checked={checked} setChecked={setChecked}/>
    {checked.compose&& <DraftEditor/>}
-   {checked.inbox&&<Inbox setChecked={setChecked} setEmailData={setEmailData}/>}
-   {checked.outbox&&<OutBox/>}
-   {checked.email&&<Email emailData={emailData}/>}
+   {checked.inbox&&<Inbox setChecked={setChecked} setEmailData={setEmailData} setInboxRead={setInboxRead}/>}
+   {checked.outbox&&<OutBox setEmailData={setEmailData} setChecked={setChecked} setInboxRead={setInboxRead}/>}
+   {checked.email&&<Email emailData={emailData} inboxRead={inboxRead}/>}
     </Stack>
      
     </>

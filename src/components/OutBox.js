@@ -4,7 +4,7 @@ import { Button, ButtonGroup, Col, Container, Row, Stack } from "react-bootstrap
 import ListGroup from "react-bootstrap/ListGroup";
 import { emailActions } from "../store/emails";
 
-const OutBox = () => {
+const OutBox = ({setChecked,setEmailData,setInboxRead}) => {
  
   const outbox = useSelector((state) => state.email.outbox);
   console.log(outbox)
@@ -22,6 +22,11 @@ const OutBox = () => {
     catch(error){
         console.log(error)
     }
+}
+const emailHandler = (data) => {
+  setChecked({ email: true })
+  setEmailData(data)
+  setInboxRead(false)
 }
   return (
     <Card
@@ -50,13 +55,15 @@ const OutBox = () => {
                 <ButtonGroup vertical className="w-100">
                   <Button
                     variant="outline-light"
-                   
+                    onClick={() => {
+                      emailHandler(data[data.length - index - 1]);
+                    }}
                   >
                     <Container>
                       <Row key={data[data.length - index - 1][0]}>
                         <Col>
                           <Stack   direction="horizontal" gap={5}>
-                            {data[data.length - index - 1][1].senderEmail}
+                            {data[data.length - index - 1][1].receiverEmail}
                           </Stack>
                         </Col>
                         <Col>{data[data.length - index - 1][1].subject}</Col>

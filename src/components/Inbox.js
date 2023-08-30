@@ -6,7 +6,7 @@ import { emailActions } from "../store/emails";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Badge from "react-bootstrap/Badge";
 
-const Inbox = ({ setChecked, setEmailData }) => {
+const Inbox = ({ setChecked, setEmailData ,setInboxRead}) => {
   const dispatch = useDispatch();
   const inbox = useSelector((state) => state.email.inbox);
 
@@ -27,7 +27,8 @@ const Inbox = ({ setChecked, setEmailData }) => {
   const emailHandler = (data) => {
     setChecked({ email: true });
     setEmailData(data);
-  };
+    setInboxRead(true);
+  }
   return (
     <Card
       className="w-75 mb-auto mt-4 mx-5"
