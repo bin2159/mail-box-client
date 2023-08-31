@@ -6,6 +6,7 @@ import { Button, Stack } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { authAction } from "../store/auth";
 import { useDispatch } from "react-redux";
+import useFetch from "../hooks/useFetch";
 const emailReducer = (state, action) => {
   if (action.type === "USER_INPUT") {
     return { value: action.val, isValid: action.val.includes("@") };
@@ -36,8 +37,8 @@ const passwordReducer = (state, action) => {
 const Login = () => {
   const [login, setLogin] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
-  const navigate=useNavigate()
-  const dispatch=useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: "",
     isValid: null,
@@ -62,7 +63,6 @@ const Login = () => {
       val: e.target.value,
       cpVal: cp,
     });
-    
   };
   const confirmPasswordHandler = (e) => {
     dispatchPassword({ type: "CONFIRM_PASSWORD", val: e.target.value });
@@ -82,32 +82,53 @@ const Login = () => {
       clearTimeout(id);
     };
   }, [emailIsValid, passwordIsValid, confirmPasswordIsValid, login]);
+  const { error, sendRequest } = useFetch();
   const formHandler = async () => {
     const email = emailState.value;
     const password = passwordState.value;
-    let url =
+    const reqData = {
+      url: "",
+      method: "POST",
+      body: { email, password, returnSecureToken: true },
+      headers: { "Content-Type": "application/json" },
+    };
+    reqData.url =
       "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBbfM-Y6Bv3aSPRNlB9S7qZFxVHuvF--l8";
     if (login) {
-      url =
+      reqData.url =
         "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBbfM-Y6Bv3aSPRNlB9S7qZFxVHuvF--l8";
     }
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify({ email, password, returnSecureToken: true }),
-        headers: { "Content-Type": "application/json" },
+    sendRequest(reqData)
+      .then((data) => {
+        dispatch(authAction.login({ email: data.email, token: data.idToken }));
+        navigate("home");
+      })
+      .catch((error) => {
+        console.log(error);
       });
-      const data = await response.json();
-      if (!response.ok) {
-        alert(data.error.message);
-        navigate('/')
-      }
-      dispatch(authAction.login({email:data.email,token:data.idToken}))
-      navigate('home')
-    } 
-    catch (error) {
-      console.log(error);
-    }
+
+    // let url =
+    //   "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBbfM-Y6Bv3aSPRNlB9S7qZFxVHuvF--l8";
+    // if (login) {
+    //   url =
+    //     "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBbfM-Y6Bv3aSPRNlB9S7qZFxVHuvF--l8";
+    // }
+    // try {
+    //   const response = await fetch(url, {
+    //     method: "POST",
+    //     body: JSON.stringify({ email, password, returnSecureToken: true }),
+    //     headers: { "Content-Type": "application/json" },
+    //   });
+    //   const data = await response.json();
+    //   if (!response.ok) {
+    //     alert(data.error.message);
+    //     navigate("/");
+    //   }
+    //   dispatch(authAction.login({ email: data.email, token: data.idToken }));
+    //   navigate("home");
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
   const loginHandler = () => {
     setLogin((prev) => !prev);
@@ -145,6 +166,7 @@ const Login = () => {
               onChange={passwordHandler}
             />
           </FloatingLabel>
+          {error && <p className="text-center">{error}</p>}
           {!login && (
             <FloatingLabel label="Confirm Password">
               <Form.Control

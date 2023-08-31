@@ -8,53 +8,83 @@ import OutBox from "../components/OutBox";
 import { useDispatch, useSelector } from "react-redux";
 import { emailActions } from "../store/emails";
 import Email from "../components/Email";
+import useFetch from "../hooks/useFetch";
 const HomePage = () => {
   const [checked, setChecked] = useState({ compose: true });
   const [emailData, setEmailData] = useState();
   const [inboxRead, setInboxRead] = useState(false);
   const dispatch = useDispatch();
-  const inbox=useSelector(state=>state.email.inbox)
+  const inbox = useSelector((state) => state.email.inbox);
+  const email = useSelector((state) => state.auth.email);
+  const { sendRequest } = useFetch();
   useEffect(() => {
-    const getReceivedData = async () => {
-      const email = localStorage.getItem("email").replace(/[@.]/g, "");
-      try {
-        const response = await fetch(
-          `https://mail-box-client-56393-default-rtdb.firebaseio.com/${email}/received.json`
-        );
-        const data = await response.json();
-        const list = Object.entries(data);
-       return list
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    const getSendData = async () => {
-      const email = localStorage.getItem("email").replace(/[@.]/g, "");
+    const reqData = { url: "" };
+    console.log(email)
+    const getData = () => {
+     
+      reqData.url = `https://mail-box-client-56393-default-rtdb.firebaseio.com/${email}/received.json`;
+      sendRequest(reqData).then((data) => {
+        const list = data && Object.entries(data);
+        dispatch(emailActions.inboxEmail(list));
+      });
 
-      try {
-        const response = await fetch(
-          `https://mail-box-client-56393-default-rtdb.firebaseio.com/${email}/send.json`
-        );
-        const data = await response.json();
-        const list = Object.entries(data);
-       
-      } catch (error) {
-        console.log(error);
-      }
+      reqData.url = `https://mail-box-client-56393-default-rtdb.firebaseio.com/${email}/send.json`;
+      sendRequest(reqData).then((data) => {
+        const list = data && Object.entries(data);
+        dispatch(emailActions.outboxEmail(list));
+      });
     };
-      // getSendData();
-      // getReceivedData();
+
     const id = setInterval(() => {
-      getSendData().then(list=> dispatch(emailActions.inboxEmail(list)))
-      getReceivedData().then(list=> dispatch(emailActions.outboxEmail(list)))
+      getData();
     }, 2000);
     return () => {
-      clearInterval(id) 
+      clearInterval(id);
     };
-  }, [dispatch]);
-  useEffect(()=>{
-    dispatch(emailActions.unReadInboxEmail())
-  },[dispatch,inbox])
+    //   const getReceivedData = async () => {
+    //     try {
+    //       const response = await fetch(
+    //         `https://mail-box-client-56393-default-rtdb.firebaseio.com/${email}/received.json`
+    //       );
+    //       const data = await response.json();
+    //       console.log(data,email  )
+    //       const list = Object.entries(data);
+    //       console.log(list)
+    //     dispatch(emailActions.inboxEmail(list))
+    //     // return list
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   };
+    //   const getSendData = async () => {
+    //     try {
+    //       const response = await fetch(
+    //         `https://mail-box-client-56393-default-rtdb.firebaseio.com/${email}/send.json`
+    //       );
+    //       const data = await response.json();
+    //       const list = Object.entries(data);
+    //     dispatch(emailActions.outboxEmail(list))
+    //     // return list
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //   };
+    //     // getSendData();
+    //     // getReceivedData();
+    //   const id = setInterval(() => {
+    //     getSendData().then(list=> dispatch(emailActions.inboxEmail(list)))
+    //     getReceivedData().then(list=> {dispatch(emailActions.outboxEmail(list))
+    //    })
+    //   }, 2000);
+    //   return () => {
+    //     clearInterval(id)
+    //   };
+    // }, [dispatch,email]);
+  }, [email]);
+  
+  useEffect(() => {
+    dispatch(emailActions.unReadInboxEmail());
+  }, [dispatch, inbox]);
   return (
     <>
       <Stack
